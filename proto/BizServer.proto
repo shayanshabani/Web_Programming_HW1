@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package BizServer;
+
+option go_package="web_hw1/proto";
+
+message User {
+  string id = 1;
+  string name = 2;
+  string family = 3;
+  int32 age = 4;
+  string sex = 5;
+  string created_at = 6;
+}
+
+message GetUsersRequest {
+  int32 userId = 1;
+  int32 authKey = 2;
+  int32 messageId = 3;
+}
+message GetUsersResponse {
+  repeated User users = 1;
+  int32 messageId = 2;
+}
+
+service GetUsersService {
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {}
+  rpc GetUsersWithInjection(GetUsersWithInjectionRequest) returns (GetUsersResponse) {}
+}
+
+message GetUsersWithInjectionRequest {
+  string userId = 1;
+  int32 authKey = 2;
+  int32 messageId = 3;
+}

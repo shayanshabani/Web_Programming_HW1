@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  nginx:
+    image: nginx
+    restart: always
+    container_name: nginx
+    environment:
+      - POSTGRES_USER=web_hw1
+      - POSTGRES_PASSWORD=web_hw1
+    ports:
+      - '443:443'
+      - '80:80'
+    volumes:
+      - ./nginx/web:/etc/nginx/conf.d
+    network_mode: host
+
+  db:
+    image: postgres:14-alpine
+    restart: always
+    container_name: db
+    environment:
+      - POSTGRES_USER=web_hw1
+      - POSTGRES_PASSWORD=web_hw1
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0.11-alpine
+    restart: always
+    container_name: redis
+    ports:
+      - '6379:6379'
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ./Gateway.Dockerfile
+    container_name: gateway-server
+    restart: on-failure
+    network_mode: host
+
+  auth:
+    build:
+      context: .
+      dockerfile: ./Auth.Dockerfile
+    container_name: auth-server
+    restart: on-failure
+    network_mode: host
+
+  biz:
+    build:
+      context: .
+      dockerfile: ./Biz.Dockerfile
+    container_name: biz-server
+    restart: on-failure
+    network_mode: host
+
+volumes:
+  db_data:
